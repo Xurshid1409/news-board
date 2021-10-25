@@ -1,0 +1,18 @@
+spring:
+  liquibase:
+    change-log: db/changelog/db.changelog-master.xml
+  application:
+    name: News Board
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/newsboard
+    username: best_user
+    password: best_user
+server:
+  port: 8088
