@@ -24,7 +24,6 @@ public class NewsController {
     private final NewsService newsService;
     private final ResponseErrorValidation responseErrorValidation;
 
-
 //  Get all approved news controller
 
     @GetMapping
@@ -34,6 +33,7 @@ public class NewsController {
                 .stream()
                 .map(p -> {
                     PostResponse postResponse = new PostResponse();
+                    postResponse.setId(p.getId());
                     postResponse.setTitle(p.getTitle());
                     postResponse.setMessage(p.getMessage());
                     postResponse.setUsername(p.getUser().getUsername());
@@ -52,6 +52,7 @@ public class NewsController {
                 .stream()
                 .map(p -> {
                     PostResponse postResponse = new PostResponse();
+                    postResponse.setId(p.getId());
                     postResponse.setTitle(p.getTitle());
                     postResponse.setMessage(p.getMessage());
                     postResponse.setUsername(p.getUser().getUsername());
@@ -63,7 +64,7 @@ public class NewsController {
 //  Update user own news
 
     @PutMapping("/{postId}")
-    public ResponseEntity<Object> updateNews(@Valid @PathVariable String postId,
+    public ResponseEntity<Object> updateNews(@PathVariable String postId,
                                              @RequestBody NewsRequest newsRequest, Principal principal,
                                               BindingResult bindingResult){
         ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);

@@ -54,9 +54,9 @@ public class NewsService {
     }
 
     //User update own news
-    public void updateNews(Long postId, Principal principal, NewsRequest newsRequest){
+    public void updateNews(Long newsId, Principal principal, NewsRequest newsRequest){
         User user = userService.getCurrentUser(principal);
-        News newsByIdAndUser = newsRepository.findNewsByIdAndUser(postId, user)
+        News newsByIdAndUser = newsRepository.findNewsByIdAndUser(newsId, user)
                 .orElseThrow(() -> new NewsNotFoundException(String.format("News can't be found %s", user.getUsername())));
         newsByIdAndUser.setMessage(newsRequest.getMessage());
         newsByIdAndUser.setNewsStatus(StatusNews.NEW);

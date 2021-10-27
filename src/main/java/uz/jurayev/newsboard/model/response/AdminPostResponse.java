@@ -13,5 +13,6 @@ public class AdminPostResponse {
     private LocalDateTime creationDate;
     private String username;
     private String email;
+    private String newsStatus;
     private LocalDateTime approvedDate;
 }

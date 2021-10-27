@@ -1,11 +1,14 @@
 package uz.jurayev.newsboard.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import uz.jurayev.newsboard.model.MessageResponse;
 import uz.jurayev.newsboard.model.response.AdminPostResponse;
 import uz.jurayev.newsboard.service.AdminService;
+import uz.jurayev.newsboard.util.ResponseErrorValidation;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 public class AdminController {
 
     private final AdminService adminService;
+    private final ResponseErrorValidation responseErrorValidation;
 
     @GetMapping
     public List<AdminPostResponse> getAllNews(){
@@ -27,12 +31,27 @@ public class AdminController {
                     adminPostResponse.setCreationDate(a.getCreatedDate());
                     adminPostResponse.setTitle(a.getTitle());
                     adminPostResponse.setMessage(a.getMessage());
+                    adminPostResponse.setNewsStatus(a.getNewsStatus().name());
                     adminPostResponse.setUsername(a.getUser().getUsername());
                     adminPostResponse.setEmail(a.getUser().getEmail());
                     adminPostResponse.setApprovedDate(a.getApprovedDate());
                     return adminPostResponse;
 
                 }).collect(Collectors.toList());
+    }
+
+    @PatchMapping(value = "/approved/{newsId}")
+    public ResponseEntity<Object> approvedNews(@PathVariable String newsId){
+
+            adminService.approvedNews(Long.parseLong(newsId));
+        return ResponseEntity.ok(new MessageResponse("News successfully approved"));
+    }
+
+    @PatchMapping("/refused/{newsId}")
+    public ResponseEntity<Object> refusedNews(@PathVariable String newsId) {
+
+        adminService.refusedNews(Long.parseLong(newsId));
+        return ResponseEntity.ok(new MessageResponse("News successfully refused"));
     }
 
 }
