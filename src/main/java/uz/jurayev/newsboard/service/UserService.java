@@ -31,7 +31,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
         user.setAge(request.getAge());
-        user.getRoles().add(ERole.ROLE_USER);
+        user.getRoles().add(ERole.USER);
         try {
             LOG.info("Saving user {}", user.getEmail());
             userRepository.save(user);

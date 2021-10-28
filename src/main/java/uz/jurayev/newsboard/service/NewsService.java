@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import uz.jurayev.newsboard.data.News;
-import uz.jurayev.newsboard.data.enums.StatusNews;
+import uz.jurayev.newsboard.data.enums.NewsStatus;
 import uz.jurayev.newsboard.data.User;
 import uz.jurayev.newsboard.exception.NewsNotFoundException;
 import uz.jurayev.newsboard.model.request.NewsRequest;
@@ -24,7 +24,7 @@ public class NewsService {
 
 //  Get all news with status approved
     public List<News> getAllApprovedNews(){
-        return newsRepository.findAllByNewsStatus(StatusNews.APPROVED);
+        return newsRepository.findAllByNewsStatus(NewsStatus.APPROVED);
     }
 
     //User Publish news
@@ -34,7 +34,7 @@ public class NewsService {
         news.setUser(user);
         news.setMessage(newsRequest.getMessage());
         news.setTitle(newsRequest.getTitle());
-        news.setNewsStatus(StatusNews.NEW);
+        news.setNewsStatus(NewsStatus.NEW);
         news.setCreatedDate(LocalDateTime.now());
         LOG.info("Saving news for user: {}", user.getEmail());
         newsRepository.save(news);
@@ -50,7 +50,7 @@ public class NewsService {
     //Get user all news
     public List<News> getAllNewsForUser(Principal principal){
         User user = userService.getCurrentUser(principal);
-        return newsRepository.findAllByUserAndNewsStatusOrderByCreatedDateDesc(user, StatusNews.APPROVED);
+        return newsRepository.findAllByUserAndNewsStatusOrderByCreatedDateDesc(user, NewsStatus.APPROVED);
     }
 
     //User update own news
@@ -59,7 +59,7 @@ public class NewsService {
         News newsByIdAndUser = newsRepository.findNewsByIdAndUser(newsId, user)
                 .orElseThrow(() -> new NewsNotFoundException(String.format("News can't be found %s", user.getUsername())));
         newsByIdAndUser.setMessage(newsRequest.getMessage());
-        newsByIdAndUser.setNewsStatus(StatusNews.NEW);
+        newsByIdAndUser.setNewsStatus(NewsStatus.NEW);
         newsRepository.save(newsByIdAndUser);
     }
 }

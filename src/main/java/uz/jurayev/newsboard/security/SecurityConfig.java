@@ -3,7 +3,7 @@ package uz.jurayev.newsboard.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,10 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import uz.jurayev.newsboard.data.enums.ERole;
-import uz.jurayev.newsboard.jwt.JwtAuthenticationEntryPoint;
-import uz.jurayev.newsboard.jwt.JwtTokenVerifier;
-import uz.jurayev.newsboard.jwt.JwtUsernamePasswordAuthFilter;
+import uz.jurayev.newsboard.jwt.CustomAuthenticationFilter;
+import uz.jurayev.newsboard.jwt.CustomAuthorizationFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -24,54 +24,35 @@ import uz.jurayev.newsboard.jwt.JwtUsernamePasswordAuthFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsServiceImpl userDetailsService;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .exceptionHandling()
-                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
+
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
+
+        http.cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager()))
-                .addFilterAfter(new JwtTokenVerifier(), JwtUsernamePasswordAuthFilter.class)
+                .addFilter(customAuthenticationFilter)
+                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/api/**").permitAll()
-                .antMatchers( "/news/api/**").hasAuthority(ERole.ROLE_USER.name())
-                .antMatchers( "/management/api/**").hasAuthority(ERole.ROLE_ADMIN.name())
+                .antMatchers( "/news/api/**").hasAnyAuthority(ERole.USER.name(), ERole.ADMIN.name())
+                .antMatchers( "/management/api/**").hasAuthority(ERole.ADMIN.name())
                 .anyRequest()
                 .authenticated();
-//                .and()
-//                .formLogin()
-//                    .loginPage("/api/login")
-//                    .defaultSuccessUrl("/api/index", true)
-//                .usernameParameter("username")
-//                .passwordParameter("password")
-//                .and()
-//                    .rememberMe().tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(22))
-//                .key("xurshid")
-//                .and()
-//                .logout()
-//                    .logoutUrl("/logout")
-//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-//                .invalidateHttpSession(true)
-//                .clearAuthentication(true)
-//                .deleteCookies("JSESSIONID", "remember-me")
-//                .logoutSuccessUrl("/api/login");
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider());
-    }
-
-    @Bean
-    protected DaoAuthenticationProvider daoAuthenticationProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Bean

@@ -2,14 +2,10 @@ package uz.jurayev.newsboard.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uz.jurayev.newsboard.model.MessageResponse;
 import uz.jurayev.newsboard.model.response.AdminPostResponse;
 import uz.jurayev.newsboard.service.AdminService;
-import uz.jurayev.newsboard.util.ResponseErrorValidation;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +15,6 @@ import java.util.stream.Collectors;
 public class AdminController {
 
     private final AdminService adminService;
-    private final ResponseErrorValidation responseErrorValidation;
 
     @GetMapping
     public List<AdminPostResponse> getAllNews(){

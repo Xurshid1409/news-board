@@ -5,15 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import uz.jurayev.newsboard.data.News;
-import uz.jurayev.newsboard.data.enums.StatusNews;
+import uz.jurayev.newsboard.data.enums.NewsStatus;
 import uz.jurayev.newsboard.exception.NewsNotFoundException;
 import uz.jurayev.newsboard.repo.NewsRepository;
 import uz.jurayev.newsboard.repo.UserRepository;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,17 +28,17 @@ public class AdminService {
     }
 
     public void approvedNews(Long newsId){
-        News newNews = newsRepository.findNewsByIdAndNewsStatus(newsId, StatusNews.NEW)
+        News newNews = newsRepository.findNewsByIdAndNewsStatus(newsId, NewsStatus.NEW)
                 .orElseThrow(() -> new NewsNotFoundException("News not found"));
-        newNews.setNewsStatus(StatusNews.APPROVED);
+        newNews.setNewsStatus(NewsStatus.APPROVED);
         newNews.setApprovedDate(LocalDateTime.now());
         newsRepository.save(newNews);
     }
 
     public void refusedNews(Long newsId){
-        News newNews = newsRepository.findNewsByIdAndNewsStatus(newsId, StatusNews.NEW)
+        News newNews = newsRepository.findNewsByIdAndNewsStatus(newsId, NewsStatus.NEW)
                 .orElseThrow(() -> new NewsNotFoundException("News not found"));
-        newNews.setNewsStatus(StatusNews.REFUSED);
+        newNews.setNewsStatus(NewsStatus.REFUSED);
         newNews.setApprovedDate(LocalDateTime.now());
         newsRepository.save(newNews);
     }

@@ -5,10 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 import uz.jurayev.newsboard.data.base.AbstractData;
-import uz.jurayev.newsboard.data.enums.StatusNews;
+import uz.jurayev.newsboard.data.enums.NewsStatus;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -28,10 +27,11 @@ public class News extends AbstractData {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    private StatusNews newsStatus;
+    private NewsStatus newsStatus;
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime approvedDate;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -39,7 +39,6 @@ public class News extends AbstractData {
         News news = (News) o;
         return getId() != null && Objects.equals(getId(), news.getId());
     }
-
     @Override
     public int hashCode() {
         return 0;

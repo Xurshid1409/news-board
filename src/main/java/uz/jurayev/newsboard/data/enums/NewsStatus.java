@@ -1,5 +1,5 @@
 package uz.jurayev.newsboard.data.enums;
 
-public enum StatusNews {
+public enum NewsStatus {
     NEW, APPROVED, REFUSED
 }

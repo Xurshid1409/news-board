@@ -10,8 +10,8 @@ import static uz.jurayev.newsboard.data.enums.Permission.*;
 
 public enum ERole {
 
-    ROLE_ADMIN(Sets.newHashSet(NEWS_READ, NEWS_WRITE, USER_READ, USER_WRITE)),
-    ROLE_USER(Sets.newHashSet(USER_READ, USER_WRITE));
+    ADMIN(Sets.newHashSet(NEWS_READ, NEWS_WRITE, USER_READ, USER_WRITE)),
+    USER(Sets.newHashSet());
 
     private final Set<Permission> permissions;
 

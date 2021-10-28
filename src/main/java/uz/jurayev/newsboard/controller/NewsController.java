@@ -2,6 +2,7 @@ package uz.jurayev.newsboard.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,6 @@ import uz.jurayev.newsboard.model.request.NewsRequest;
 import uz.jurayev.newsboard.model.response.PostResponse;
 import uz.jurayev.newsboard.service.NewsService;
 import uz.jurayev.newsboard.util.ResponseErrorValidation;
-
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
